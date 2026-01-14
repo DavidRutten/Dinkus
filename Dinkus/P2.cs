@@ -17,7 +17,7 @@ public readonly record struct P2(double X, double Y)
   /// </summary>
   public static V2 operator -(P2 a, P2 b)
   {
-    return new V2(b.X - a.X, b.Y - a.Y);
+    return new V2(a.X - b.X, a.Y - b.Y);
   }
   /// <summary>
   /// Move a point along a vector.
