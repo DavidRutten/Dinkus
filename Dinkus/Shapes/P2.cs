@@ -1,4 +1,4 @@
-﻿namespace Dinkus.Shapes;
+namespace Dinkus.Shapes;
 
 /// <summary>
 /// A 2d point with double precision coordinates.
