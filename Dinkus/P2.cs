@@ -8,6 +8,11 @@
 public readonly record struct P2(double X, double Y)
 {
   /// <summary>
+  /// Gets the origin point.
+  /// </summary>
+  public static readonly P2 Origin = new(0, 0);
+
+  /// <summary>
   /// Create a vector from b to a.
   /// </summary>
   public static V2 operator -(P2 a, P2 b)

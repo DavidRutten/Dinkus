@@ -5,6 +5,27 @@ namespace Dinkus.Shapes;
 /// </summary>
 public readonly record struct V2(double X, double Y)
 {
+  /// <summary>
+  /// Gets the zero vector.
+  /// </summary>
+  public static readonly V2 Zero = new(0, 0);
+  /// <summary>
+  /// Gets the unit X vector.
+  /// </summary>
+  public static readonly V2 UnitX = new(1, 0);
+  /// <summary>
+  /// Gets the unit Y vector.
+  /// </summary>
+  public static readonly V2 UnitY = new(0, 1);
+  /// <summary>
+  /// Create a unit vector pointing in the indicated angle.
+  /// </summary>
+  /// <param name="angle">Angle (in radians).</param>
+  public static V2 FromAngle(double angle)
+  {
+    return new(Math.Cos(angle), Math.Sin(angle));
+  }
+
   #region arithmetic operators
   /// <summary>
   /// Vector identity.
