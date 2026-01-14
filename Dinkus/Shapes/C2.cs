@@ -7,25 +7,32 @@ namespace Dinkus.Shapes;
 /// <param name="R">Circle radius.</param>
 public readonly record struct C2(P2 M, double R)
 {
+  private const double TwoPi = 2 * Math.PI;
+
   /// <summary>
   /// Gets the parameter on the circle closest to the point.
   /// Parameter is in radians, where 0 is at (Center.X + Radius, Center.Y).
   /// </summary>
+  /// <returns>The circle parameter closest to the point, in the [0, 1) range.</returns>
   public double ParameterNear(P2 point)
   {
     var dx = point.X - M.X;
     var dy = point.Y - M.Y;
-    return Math.Atan2(dy, dx);
+    var t = Math.Atan2(dy, dx) / TwoPi;
+    if (t < 0)
+      t += 1;
+    return t;
   }
 
   /// <summary>
   /// Evaluate the circle at the given parameter (in radians).
   /// </summary>
+  /// <param name="t">Circle parameter in the [0, 1) range.</param>
   public P2 PointAt(double t)
   {
     return new P2(
-      M.X + R * Math.Cos(t),
-      M.Y + R * Math.Sin(t)
+      M.X + R * Math.Cos(TwoPi * t),
+      M.Y + R * Math.Sin(TwoPi * t)
     );
   }
 
@@ -36,8 +43,8 @@ public readonly record struct C2(P2 M, double R)
   public V2 TangentAt(double t)
   {
     return new V2(
-      -Math.Sin(t),
-      +Math.Cos(t)
+      -Math.Sin(TwoPi * t),
+      +Math.Cos(TwoPi * t)
     );
   }
 #pragma warning restore CA1822 // Mark members as static

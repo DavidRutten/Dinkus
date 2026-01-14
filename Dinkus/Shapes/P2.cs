@@ -22,6 +22,13 @@ public readonly record struct P2(double X, double Y)
   /// <summary>
   /// Move a point along a vector.
   /// </summary>
+  public static P2 operator +(P2 a, P2 b)
+  {
+    return new P2(a.X + b.X, a.Y + b.Y);
+  }
+  /// <summary>
+  /// Move a point along a vector.
+  /// </summary>
   public static P2 operator +(P2 point, V2 motion)
   {
     return new P2(point.X + motion.X, point.Y + motion.Y);
@@ -32,6 +39,20 @@ public readonly record struct P2(double X, double Y)
   public static P2 operator +(V2 motion, P2 point)
   {
     return new P2(point.X + motion.X, point.Y + motion.Y);
+  }
+  /// <summary>
+  /// Scale a point based on the origin.
+  /// </summary>
+  public static P2 operator *(P2 a, double scalar)
+  {
+    return new P2(a.X * scalar, a.Y * scalar);
+  }
+  /// <summary>
+  /// Scale a point based on the origin.
+  /// </summary>
+  public static P2 operator *(double scalar, P2 a)
+  {
+    return new P2(a.X * scalar, a.Y * scalar);
   }
 
   /// <summary>
