@@ -1,6 +1,3 @@
-using System.Globalization;
-using System.Security.Cryptography;
-
 namespace Dinkus.Shapes;
 
 /// <summary>
@@ -147,9 +144,9 @@ public readonly record struct A2(P2 M, double R, double A, double S) : ICurveLik
   }
 
   /// <summary>
-  /// Gets whether this arc is fully closed.
+  /// Gets whether this curve is closed.
   /// </summary>
-  public bool IsClosed
+  public bool Closed
   {
     get { return S <= -Full || S >= Full; }
   }

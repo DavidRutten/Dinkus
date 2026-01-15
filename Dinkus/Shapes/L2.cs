@@ -74,6 +74,14 @@ public readonly record struct L2(P2 A, P2 B) : ICurveLike
     get { return A.DistanceTo(B); }
   }
   /// <summary>
+  /// Gets whether this curve is closed.
+  /// </summary>
+  public bool Closed
+  {
+    get { return false; }
+  }
+
+  /// <summary>
   /// Gets the span vector of this line.
   /// </summary>
   public V2 Span

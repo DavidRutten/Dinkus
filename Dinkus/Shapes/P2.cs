@@ -36,6 +36,13 @@ public readonly record struct P2(double X, double Y)
   /// <summary>
   /// Move a point along a vector.
   /// </summary>
+  public static P2 operator -(P2 point, V2 motion)
+  {
+    return new P2(point.X - motion.X, point.Y - motion.Y);
+  }
+  /// <summary>
+  /// Move a point along a vector.
+  /// </summary>
   public static P2 operator +(V2 motion, P2 point)
   {
     return new P2(point.X + motion.X, point.Y + motion.Y);

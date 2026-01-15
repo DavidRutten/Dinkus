@@ -65,18 +65,18 @@ public sealed class TestImage : IDisposable
     return new Color(argb);
   }
 
-  public void DrawLine(L2 line, System.Drawing.Color colour, float width = 4f)
+  public void Draw(L2 line, System.Drawing.Color colour, float width = 4f)
   {
     var p1 = new PointF((float)line.A.X, (float)line.A.Y);
     var p2 = new PointF((float)line.B.X, (float)line.B.Y);
     Image.Mutate(ctx => { ctx.DrawLine(GdiToSix(colour), width, p1, p2); });
   }
-  public void DrawCircle(C2 circle, System.Drawing.Color colour, float width = 4f)
+  public void Draw(C2 circle, System.Drawing.Color colour, float width = 4f)
   {
     var path = new EllipsePolygon((float)circle.M.X, (float)circle.M.Y, (float)circle.R);
     Image.Mutate(ctx => { ctx.Draw(GdiToSix(colour), width, path); });
   }
-  public void DrawArc(A2 arc, System.Drawing.Color colour, float width = 4f)
+  public void Draw(A2 arc, System.Drawing.Color colour, float width = 4f)
   {
     var centre = new PointF((float)arc.M.X, (float)arc.M.Y);
     var radius = (float)arc.R;
@@ -87,8 +87,33 @@ public sealed class TestImage : IDisposable
 
     Image.Mutate(ctx => ctx.Draw(GdiToSix(colour), width, path));
   }
+  public void Draw(Curve curve, System.Drawing.Color colour, float width = 4f)
+  {
+    for (int i = 0; i < curve.Count; i++)
+    {
+      var segment = curve[i];
+      switch (segment)
+      {
+        case L2 line:
+          Draw(line, colour, width);
+          break;
 
-  public void FillCircle(P2 point, System.Drawing.Color colour, float radius = 3)
+        case C2 circle:
+          Draw(circle, colour, width);
+          break;
+
+        case A2 arc:
+          Draw(arc, colour, width);
+          break;
+
+        case Curve inner:
+          Draw(inner, colour, width);
+          break;
+      }
+    }
+  }
+
+  public void Fill(P2 point, System.Drawing.Color colour, float radius = 3)
   {
     var circle = new EllipsePolygon((float)point.X, (float)point.Y, radius);
     Image.Mutate(ctx => ctx.Fill(GdiToSix(colour), circle));
@@ -97,9 +122,9 @@ public sealed class TestImage : IDisposable
   /// <summary>
   /// Runs a "shader" function across the image.
   /// </summary>
-  /// <param name="shader">Function taking (x,y) pixel coordinates, returning a Color.</param>
-  /// <param name="accuracy">1 = per-pixel, >1 = block sampling.</param>
-  public void RunShader(Func<P2, System.Drawing.Color> shader, int accuracy = 2)
+  /// <param name="shader">Function returning a colour for a coordinate in image pixel space.</param>
+  /// <param name="accuracy">Size of sampling units. 1=every pixel, 10 = blocks of 100 pixels at once.</param>
+  public void Fill(Func<P2, System.Drawing.Color> shader, int accuracy = 2)
   {
     ArgumentNullException.ThrowIfNull(shader);
     accuracy = Math.Clamp(accuracy, 1, 100);

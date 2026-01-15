@@ -9,6 +9,10 @@ public interface ICurveLike
   /// Gets the length of this curve.
   /// </summary>
   double Length { get; }
+  /// <summary>
+  /// Gets whether this curve is closed.
+  /// </summary>
+  bool Closed { get; }
 
   /// <summary>
   /// Evaluate the curve at the given parameter. May return invalid points

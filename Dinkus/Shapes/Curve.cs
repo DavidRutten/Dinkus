@@ -81,6 +81,14 @@ public sealed class Curve : ICurveLike
     }
   }
 
+  /// <summary>
+  /// Gets the segment at the given index.
+  /// </summary>
+  public ICurveLike this[int index]
+  {
+    get { return _segments[index]; }
+  }
+
   // BoundingBox
   #endregion;
 
@@ -107,13 +115,35 @@ public sealed class Curve : ICurveLike
   {
     if (Closed || point.DistanceTo(EndPoint) < Tolerance)
       return this;
-      
-    return new Curve(_segments.Add(new L2(EndPoint, point)));
+
+    return new Curve(_segments.Add(A2.Create(EndPoint, point, _segments[^1].TangentAt(1))));
   }
 
-  // Add(ICurveLike)
-  // LineTo(P2)
-  // ArcTo(P2)
+  /// <summary>
+  /// Append a curve to the end of this curve.
+  /// If the start of the given curve does not match the end
+  /// of this curve, a line segment will be inserted between
+  /// the two.
+  /// </summary>
+  public Curve Append(ICurveLike segment)
+  {
+    if (Closed || segment.Closed)
+      return this;
+
+    var segments = _segments;
+    var p1 = PointAt(1);
+    var p2 = segment.PointAt(0);
+
+    if (p1.DistanceTo(p2) > Tolerance)
+      segments = segments.Add(new L2(p1, p2));
+
+    if (segment is Curve curve)
+      segments.AddRange(curve._segments);
+    else
+      segments = segments.Add(segment);
+
+    return new Curve(segments);
+  }
   #endregion
 
   #region ICurveLike implementation

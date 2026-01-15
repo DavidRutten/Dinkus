@@ -98,6 +98,13 @@ public readonly record struct C2(P2 M, double R): ICurveLike
   {
     get { return 2.0 * Math.PI * R; }
   }
+/// <summary>
+  /// Gets whether this curve is closed.
+  /// </summary>
+  public bool Closed
+  {
+    get { return true; }
+  }
 
   /// <summary>
   /// Format this circle.
