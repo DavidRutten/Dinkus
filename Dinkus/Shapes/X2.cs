@@ -125,4 +125,41 @@ public static class X2
     else
       return [];
   }
+
+  /// <summary>
+  /// Find the intersection points between two circles.
+  /// </summary>
+  /// <param name="a">First circle.</param>
+  /// <param name="b">Second circle.</param>
+  /// <returns>Zero, one or two parameters on the first circle at the intersecions.</returns>
+  public static double[] CircleCircle(C2 a, C2 b)
+  {
+    var d = a.M.DistanceTo(b.M);
+
+    if (d < 1e-12) return [];                       // Concentric.
+    if (d > a.R + b.R + 1e-12) return [];           // Disjoint.
+    if (d < Math.Abs(a.R - b.R) - 1e-12) return []; // Nested.
+
+    // Distance along the a.M -> b.M chord where the perpendicular
+    // line coincident with the intersection points intersects the chord.
+    var offset = (a.R * a.R - b.R * b.R + d * d) / (2 * d);
+    var hh = a.R * a.R - offset * offset;
+    var span = b.M - a.M;
+
+    // Single tangent intersection.
+    if (hh < 1e-12)
+    {
+      var p0 = a.M + offset * span / d;
+      var t = a.ParameterNear(p0);
+      return [t];
+    }
+
+    var h = Math.Sqrt(hh);
+    var mid = a.M + offset * span / d;
+
+    var perp = span.Rotate(90) * (h / d);
+    var t1 = a.ParameterNear(mid - perp);
+    var t2 = a.ParameterNear(mid + perp);
+    return [t1, t2];
+  }
 }

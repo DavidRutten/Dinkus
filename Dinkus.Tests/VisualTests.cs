@@ -1,6 +1,9 @@
 using System.Drawing;
 using OpenColor;
 using Dinkus.Shapes;
+using System.Runtime.CompilerServices;
+using SixLabors.ImageSharp.ColorSpaces.Conversion;
+using Newtonsoft.Json.Serialization;
 
 namespace Dinkus.Tests;
 
@@ -403,6 +406,37 @@ public class VisualTests
       image.Fill(pUL, cUL, 4);
       image.Fill(pLR, cLR, 4);
       image.Fill(pUR, cUR, 4);
+    }
+  }
+
+  [Fact]
+  public void ViewCircleCircleIntersection()
+  {
+    using (var image = new TestImage("CircleXCircle"))
+    {
+      var circles = new C2[9 * 9];
+      var random = new Random(2);
+      int index = 0;
+      for (int i = 100; i < 1000; i += 100)
+        for (int j = 100; j < 1000; j += 100)
+        {
+          var x = i + random.Next(-40, 40);
+          var y = j + random.Next(-40, 40);
+          var r = random.Next(40, 80);
+
+          var c = new C2(new P2(x, y), r);
+          circles[index] = c;
+          image.Draw(c, OC.Lime9, 1);
+
+          for (int k = 0; k < index; k++)
+          {
+            var ts = X2.CircleCircle(c, circles[k]);
+            foreach (var t in ts)
+              image.Fill(c.PointAt(t), OC.Lime9);
+          }
+
+          index++;
+        }
     }
   }
 }
