@@ -6,6 +6,11 @@ namespace Dinkus.Shapes;
 public interface ICurveLike
 {
   /// <summary>
+  /// Gets the length of this curve.
+  /// </summary>
+  double Length { get; }
+
+  /// <summary>
   /// Evaluate the curve at the given parameter. May return invalid points
   /// if the evaluation parameter exceeds the curve domain.
   /// </summary>

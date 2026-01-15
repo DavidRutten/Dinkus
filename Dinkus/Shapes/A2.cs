@@ -1,3 +1,6 @@
+using System.Globalization;
+using System.Security.Cryptography;
+
 namespace Dinkus.Shapes;
 
 /// <summary>
@@ -11,8 +14,56 @@ namespace Dinkus.Shapes;
 public readonly record struct A2(P2 M, double R, double A, double S) : ICurveLike
 {
   private const int Full = 360;
-  private const double ToDegrees = 180 / Math.PI;
-  private const double ToRadians = Math.PI / 180;
+  internal const double ToDegrees = 180 / Math.PI;
+  internal const double ToRadians = Math.PI / 180;
+
+  /// <summary>
+  /// Creates an arc from start point, end point, and start tangent direction.
+  /// </summary>
+  /// <param name="start">Arc start point.</param>
+  /// <param name="end">Arc end point.</param>
+  /// <param name="tangent">Tangent direction at start point (will be normalized).</param>
+  /// <returns>A valid arc, or an arc with zero sweep angle if the geometry is degenerate.</returns>
+  public static A2 Create(P2 start, P2 end, V2 tangent)
+  {
+    var chord = new L2(start, end);
+
+    // Zero length arc.
+    if (chord.Length < 1e-12)
+      return new A2(start, 0, 0, 0);
+
+    tangent = tangent.Normalise();
+
+    // Flat arc.
+    if ((start + tangent).DistanceTo(start + chord.Tangent) < 1e-8)
+      return new A2(start, 0, 0, 0);
+
+    var perp1 = new L2(start, start + tangent.Rotate(90));
+    var mid = chord.PointAt(0.5);
+    var perp2 = new L2(mid, mid + chord.Tangent.Rotate(90));
+
+    var (t1, t2) = X2.LineLine(perp1, perp2);
+    if (t1 == 0.5 && t2 == 0.5)
+      return new A2(start, 0, 0, 0);
+
+    var centre = 0.5 * perp1.PointAt(t1) +
+                 0.5 * perp2.PointAt(t2);
+
+    var angle1 = ToDegrees * Math.Atan2(start.Y - centre.Y, start.X - centre.X);
+    var angle2 = ToDegrees * Math.Atan2(end.Y - centre.Y, end.X - centre.X);
+
+    var sweep = angle2 - angle1;
+    while (sweep > 180) sweep -= Full;
+    while (sweep < -180) sweep += Full;
+
+    var radial = (start - centre).Normalise();
+    var cross = radial.X * tangent.Y - radial.Y * tangent.X;
+
+    if ((cross > 0 && sweep < 0) || (cross < 0 && sweep > 0))
+      sweep += sweep > 0 ? -Full : Full;
+
+    return new A2(centre, centre.DistanceTo(start), angle1, sweep);
+  }
 
   /// <summary>
   /// Gets the end angle of the arc in degrees.

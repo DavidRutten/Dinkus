@@ -1,5 +1,6 @@
 using OpenColor;
 using Dinkus.Shapes;
+using System.Drawing;
 
 namespace Dinkus.Tests;
 
@@ -49,7 +50,7 @@ public class VisualTests
       }
     }
   }
-  
+
   /// <summary>
   /// A shader implementation for curve based voronoi shading of the plane.
   /// </summary>
@@ -91,7 +92,7 @@ public class VisualTests
     using (var image = new TestImage("LineDistanceTo"))
     {
       var line = new L2(new P2(150, 200), new P2(800, 750));
-      
+
       var shader = new DistanceShader(line, 0, 500);
       image.RunShader(shader.Run);
 
@@ -114,14 +115,14 @@ public class VisualTests
       image.DrawCircle(circle, OC.Lime9);
     }
   }
-  
+
   [Fact]
   public void ViewArcDistanceTo()
   {
     using (var image = new TestImage("ArcDistanceTo"))
     {
       var arc = new A2(new P2(400, 400), 300, 45, 225);
-      
+
       var shader = new DistanceShader(arc, 0, 500);
       image.RunShader(shader.Run);
 
@@ -248,6 +249,77 @@ public class VisualTests
 
       image.DrawArc(arc1, OC.Pink8);
       image.DrawArc(arc2, OC.Orange8);
+    }
+  }
+
+  [Fact]
+  public void ViewArcStartTangent()
+  {
+    var pUL = new P2(100, 900);
+    var pUR = new P2(900, 900);
+    var pLL = new P2(100, 100);
+    var pLR = new P2(900, 100);
+
+    var tUL = new V2(+1, -1);
+    var tUR = new V2(-1, -1);
+    var tLL = new V2(+1, +1);
+    var tLR = new V2(-1, +1);
+
+    var cUL = OC.Pink8;
+    var cUR = OC.Orange8;
+    var cLL = OC.Lime8;
+    var cLR = OC.Cyan8;
+
+    using (var image = new TestImage("ArcStartTangent"))
+    {
+      var random = new Random(1);
+      for (int i = 0; i < 800; i++)
+      {
+        var x = random.Next(10, 990);
+        var y = random.Next(10, 990);
+        var p2 = new P2(x, y);
+
+        P2 p1;
+        V2 tn;
+        Color cl;
+
+        if (p2.X < 500 && p2.Y < 500)
+        {
+          p1 = pLL;
+          tn = tLL;
+          cl = cLL;
+        }
+        else if (p2.X < 500 && p2.Y >= 500)
+        {
+          p1 = pUL;
+          tn = tUL;
+          cl = cUL;
+        }
+        else if (p2.X >= 500 && p2.Y < 500)
+        {
+          p1 = pLR;
+          tn = tLR;
+          cl = cLR;
+        }
+        else
+        {
+          p1 = pUR;
+          tn = tUR;
+          cl = cUR;
+        }
+
+        var arc = A2.Create(p1, p2, tn);
+        if (arc.S < -270 || arc.S > 270)
+          continue;
+
+        image.FillCircle(p2, cl, 2);
+        image.DrawArc(arc, cl, 1);
+      }
+
+      image.FillCircle(pLL, cLL, 4);
+      image.FillCircle(pUL, cUL, 4);
+      image.FillCircle(pLR, cLR, 4);
+      image.FillCircle(pUR, cUR, 4);
     }
   }
 }

@@ -94,11 +94,11 @@ public readonly record struct V2(double X, double Y)
     get { return Math.Sqrt(X * X + Y * Y); }
   }
   /// <summary>
-  /// Gets the angle (in radians) of this vector.
+  /// Gets the angle in degrees of this vector.
   /// </summary>
   public double Angle
   {
-    get { return Math.Atan2(Y, X); }
+    get { return A2.ToDegrees * Math.Atan2(Y, X); }
   }
 
   /// <summary>
@@ -117,13 +117,13 @@ public readonly record struct V2(double X, double Y)
   /// <summary>
   /// Rotate this vector through an anti-clockwise angle.
   /// </summary>
-  /// <param name="angle">Rotation angle, in radians.</param>
+  /// <param name="angle">Rotation angle, in degrees.</param>
   public V2 Rotate(double angle)
   {
     var l = Length;
     var a = Angle + angle;
-    return new V2(l * Math.Cos(a),
-                  l * Math.Sin(a));
+    return new V2(l * Math.Cos(A2.ToRadians * a),
+                  l * Math.Sin(A2.ToRadians * a));
   }
 
   /// <summary>

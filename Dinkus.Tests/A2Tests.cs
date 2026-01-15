@@ -1,6 +1,7 @@
 using Dinkus.Shapes;
 
 namespace Dinkus.Tests;
+
 public class A2Tests
 {
   [Fact]
@@ -60,5 +61,14 @@ public class A2Tests
 
     var c = a.ParameterNear(new P2(0.5, -2));
     Assert.Equal(1, c);
+  }
+
+  [Fact]
+  public void TestA2Direction()
+  {
+    var a = A2.Create(P2.Origin, new P2(1, 1), new V2(1, 0));
+    Assert.Equal(0.0, a.M.X, 1e-12);
+    Assert.Equal(1.0, a.M.Y, 1e-12);
+    Assert.Equal(1.0, a.R, 1e-12);
   }
 }

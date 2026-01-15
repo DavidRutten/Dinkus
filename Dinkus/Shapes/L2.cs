@@ -55,7 +55,7 @@ public readonly record struct L2(P2 A, P2 B) : ICurveLike
   /// </summary>
   public override string ToString()
   {
-    return ToString("({0:0.####} {1:0.####}, {0:0.####} {1:0.####})");
+    return ToString("({0:0.####} {1:0.####}, {2:0.####} {3:0.####})");
   }
   /// <summary>
   /// Format this line.

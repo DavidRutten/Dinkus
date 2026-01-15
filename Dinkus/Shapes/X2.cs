@@ -3,7 +3,7 @@ namespace Dinkus.Shapes;
 /// <summary>
 /// Provides static intersection methods for various shapes.
 /// </summary>
-public static class Intersect
+public static class X2
 {
   /// <summary>
   /// Find the parameters on two infinite lines where they most closely approach each other.
@@ -17,21 +17,35 @@ public static class Intersect
     var d1 = line1.Span;
     var d2 = line2.Span;
     var delta = line2.A - line1.A;
-
-    var dot11 = d1 * d1;
-    var dot22 = d2 * d2;
-    var dot12 = d1 * d2;
-
-    var denom = dot11 * dot22 - dot12 * dot12;
+    var cross = d1.X * d2.Y - d1.Y * d2.X;
 
     // Handle parallel and degenerate lines.
-    if (Math.Abs(denom) < 1e-16)
+    if (Math.Abs(cross) < 1e-16)
       return (0.5, 0.5);
 
-    var t1 = (dot12 * d2 * delta - dot22 * d1 * delta) / denom;
-    var t2 = (dot11 * d2 * delta - dot12 * d1 * delta) / denom;
+    var t1 = (delta.X * d2.Y - delta.Y * d2.X) / cross;
+    var t2 = (delta.X * d1.Y - delta.Y * d1.X) / cross;
 
     return (t1, t2);
+
+    // var d1 = line1.Span;
+    // var d2 = line2.Span;
+    // var delta = line2.A - line1.A;
+
+    // var dot11 = d1 * d1;
+    // var dot22 = d2 * d2;
+    // var dot12 = d1 * d2;
+
+    // var denom = dot11 * dot22 - dot12 * dot12;
+
+    // // Handle parallel and degenerate lines.
+    // if (Math.Abs(denom) < 1e-16)
+    //   return (0.5, 0.5);
+
+    // var t1 = (dot12 * d2 * delta - dot22 * d1 * delta) / denom;
+    // var t2 = (dot11 * d2 * delta - dot12 * d1 * delta) / denom;
+
+    // return (t1, t2);
   }
 
   /// <summary>
