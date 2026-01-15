@@ -14,9 +14,9 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// <summary>
   /// Gets the end angle of the arc.
   /// </summary>
-  public double EndAngle
+  public double E
   {
-    get { return A + S; }
+    get { return A + Math.Clamp(S, -TwoPi, TwoPi); }
   }
 
   /// <summary>
@@ -33,10 +33,10 @@ public readonly record struct A2(P2 M, double R, double A, double S)
     var relativeAngle = angle - A;
 
     while (relativeAngle < 0)
-      relativeAngle += sweep;
+      relativeAngle += TwoPi;
 
-    while (relativeAngle >= sweep)
-      relativeAngle -= sweep;
+    while (relativeAngle >= TwoPi)
+      relativeAngle -= TwoPi;
 
     // Handle negative sweep (clockwise).
     if (sweep < 0)
@@ -61,7 +61,7 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// </summary>
   public P2 PointAt(double t)
   {
-    var angle = A + t * Math.Clamp(S, 0, 1);
+    var angle = A + t * Math.Clamp(S, -TwoPi, TwoPi);
     return new P2(M.X + R * Math.Cos(angle),
                   M.Y + R * Math.Sin(angle));
   }
