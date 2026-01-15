@@ -1,7 +1,8 @@
 namespace Dinkus.Shapes;
 
 /// <summary>
-/// A 2d circular arc with double precision coordinates.
+/// A 2d circular arc with double precision coordinates. The parametrisation of
+/// arcs is always in the [0, 1] interval.
 /// </summary>
 /// <param name="M">Arc centre.</param>
 /// <param name="R">Arc radius.</param>
@@ -94,6 +95,22 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   public double Length
   {
     get { return R * Math.Abs(Math.Clamp(S, -TwoPi, TwoPi)); }
+  }
+
+  /// <summary>
+  /// Gets whether this arc is fully closed.
+  /// </summary>
+  public bool IsClosed
+  {
+    get { return S <= -TwoPi || S >= TwoPi; }
+  }
+  /// <summary>
+  /// Gets whether this arc is oriented in a clockwise manner.
+  /// Positive sweep angles yield an anti-clockwise orientation.
+  /// </summary>
+  public bool IsClockwise
+  {
+    get { return S < 0; }
   }
 
   /// <summary>

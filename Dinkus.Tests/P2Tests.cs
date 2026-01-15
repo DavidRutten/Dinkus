@@ -1,7 +1,6 @@
 ﻿using Dinkus.Shapes;
 
 namespace Dinkus.Tests;
-
 public class P2Tests
 {
   [Fact]

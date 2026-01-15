@@ -1,7 +1,8 @@
 namespace Dinkus.Shapes;
 
 /// <summary>
-/// A 2d line segment with double precision coordinates.
+/// A 2d line segment with double precision coordinates. The parametrisation of
+/// lines is always in the [0, 1] interval.
 /// </summary>
 /// <param name="A">Line start point.</param>
 /// <param name="B">Line end point.</param>

@@ -1,7 +1,8 @@
 namespace Dinkus.Shapes;
 
 /// <summary>
-/// A 2d circle with double precision coordinates.
+/// A 2d circle with double precision coordinates. The parametrisation of
+/// circles is always in the [0, 1) interval.
 /// </summary>
 /// <param name="M">Circle centre or middle.</param>
 /// <param name="R">Circle radius.</param>
