@@ -1,6 +1,8 @@
+using System.Runtime.CompilerServices;
 using Dinkus.Shapes;
 
 namespace Dinkus.Tests;
+
 public class C2Tests
 {
   [Fact]
@@ -56,5 +58,25 @@ public class C2Tests
     var c = a.TangentAt(0.5);
     Assert.Equal(0, c.X);
     Assert.Equal(-1, c.Y);
+  }
+
+  [Fact]
+  public void TestC2L2X()
+  {
+    var a = new C2(new P2(2, 2), 1.5);
+    var b = new L2(new P2(0, 3.5), new P2(4, 3.5));
+    var x = X2.SegmentCircle(b, a);
+    Assert.Single(x);
+    Assert.Equal(0.5, x[0]);
+
+    var c = new L2(P2.Origin, new P2(4, 4));
+    var y = X2.SegmentCircle(c, a);
+    Assert.Equal(2, y.Length);
+    Assert.Equal((0.5 * Math.Sqrt(32) - 1.5) / Math.Sqrt(32), y[0]);
+    Assert.Equal((0.5 * Math.Sqrt(32) + 1.5) / Math.Sqrt(32), y[1]);
+
+    var d = new L2(new P2(1.8, 1.8), new P2(2.1, 2.4));
+    var z = X2.SegmentCircle(d, a);
+    Assert.Empty(z);
   }
 }

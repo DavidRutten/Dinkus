@@ -88,5 +88,41 @@ public static class X2
     }
   }
 
+  /// <summary>
+  /// Find the intersection points for a line and a circle.
+  /// </summary>
+  /// <param name="line">Finite line segment.</param>
+  /// <param name="circle">Circle.</param>
+  /// <returns>Zero, one or two line parameters at intersection points.</returns>
+  public static double[] SegmentCircle(L2 line, C2 circle)
+  {
+    var span = line.Span;
+    var radial = line.A - circle.M;
 
+    var a = span * span;
+    var b = 2 * (radial * span);
+    var c = (radial * radial) - (circle.R * circle.R);
+
+    var discriminant = b * b - 4 * a * c;
+    if (discriminant < 0)
+      return [];
+
+    discriminant = Math.Sqrt(discriminant);
+
+    var t1 = (-b - discriminant) / (2 * a);
+    var t2 = (-b + discriminant) / (2 * a);
+    var valid1 = t1 >= 0 && t1 <= 1;
+    var valid2 = t2 >= 0 && t2 <= 1;
+    if (discriminant < 1e-12)
+      valid2 = false;
+
+    if (valid1 && valid2)
+      return [t1, t2];
+    else if (valid1)
+      return [t1];
+    else if (valid2)
+      return [t2];
+    else
+      return [];
+  }
 }
