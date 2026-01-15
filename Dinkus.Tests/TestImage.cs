@@ -80,8 +80,8 @@ public sealed class TestImage : IDisposable
   {
     var centre = new PointF((float)arc.M.X, (float)arc.M.Y);
     var radius = (float)arc.R;
-    var angle = (float)(180 * arc.A / Math.PI);
-    var sweep = (float)(180 * arc.S / Math.PI);
+    var angle = (float)arc.A;
+    var sweep = (float)arc.S;
 
     var path = new PathBuilder().AddArc(centre, radius, radius, 0, angle, sweep).Build();
 
@@ -92,5 +92,37 @@ public sealed class TestImage : IDisposable
   {
     var circle = new EllipsePolygon((float)point.X, (float)point.Y, radius);
     Image.Mutate(ctx => ctx.Fill(GdiToSix(colour), circle));
+  }
+
+  /// <summary>
+  /// Runs a "shader" function across the image.
+  /// </summary>
+  /// <param name="shader">Function taking (x,y) pixel coordinates, returning a Color.</param>
+  /// <param name="accuracy">1 = per-pixel, >1 = block sampling.</param>
+  public void RunShader(Func<P2, System.Drawing.Color> shader, int accuracy = 2)
+  {
+    ArgumentNullException.ThrowIfNull(shader);
+    accuracy = Math.Clamp(accuracy, 1, 100);
+
+    for (int y = 0; y < Height; y += accuracy)
+      for (int x = 0; x < Width; x += accuracy)
+      {
+        var sampleX = x + accuracy / 2f;
+        var sampleY = y + accuracy / 2f;
+
+        var colour = GdiToSix(shader(new P2(sampleX, sampleY)));
+        int blockWidth = Math.Min(accuracy, Width - x);
+        int blockHeight = Math.Min(accuracy, Height - y);
+
+        for (int j = 0; j < blockHeight; j++)
+        {
+          var row = y + j;
+          for (int i = 0; i < blockWidth; i++)
+          {
+            var col = x + i;
+            Image[col, row] = colour.ToPixel<Rgba32>();
+          }
+        }
+      }
   }
 }

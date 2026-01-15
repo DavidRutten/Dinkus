@@ -6,18 +6,20 @@ namespace Dinkus.Shapes;
 /// </summary>
 /// <param name="M">Arc centre.</param>
 /// <param name="R">Arc radius.</param>
-/// <param name="A">Arc start angle, in radians.</param>
-/// <param name="S">Arc sweep angle, in radians.</param>
-public readonly record struct A2(P2 M, double R, double A, double S)
+/// <param name="A">Arc start angle, in degrees.</param>
+/// <param name="S">Arc sweep angle, in degrees.</param>
+public readonly record struct A2(P2 M, double R, double A, double S) : ICurveLike
 {
-  private const double TwoPi = 2 * Math.PI;
+  private const int Full = 360;
+  private const double ToDegrees = 180 / Math.PI;
+  private const double ToRadians = Math.PI / 180;
 
   /// <summary>
-  /// Gets the end angle of the arc.
+  /// Gets the end angle of the arc in degrees.
   /// </summary>
   public double E
   {
-    get { return A + Math.Clamp(S, -TwoPi, TwoPi); }
+    get { return A + Math.Clamp(S, -Full, Full); }
   }
 
   /// <summary>
@@ -28,33 +30,29 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   {
     var dx = point.X - M.X;
     var dy = point.Y - M.Y;
-    var sweep = Math.Clamp(S, -TwoPi, TwoPi);
-    var angle = Math.Atan2(dy, dx);
 
-    var relativeAngle = angle - A;
-
-    while (relativeAngle < 0)
-      relativeAngle += TwoPi;
-
-    while (relativeAngle >= TwoPi)
-      relativeAngle -= TwoPi;
-
-    // Handle negative sweep (clockwise).
+    var start = A % Full;
+    var sweep = Math.Clamp(S, -Full, Full);
     if (sweep < 0)
     {
-      relativeAngle = -relativeAngle;
-      if (relativeAngle < 0)
-        relativeAngle += TwoPi;
+      start = E % 360;
+      sweep = -sweep;
     }
 
-    var absSweep = Math.Abs(sweep);
-    if (relativeAngle > absSweep)
-    {
-      // Check which endpoint is closer
-      return (relativeAngle - absSweep < Math.PI) ? 1.0 : 0.0;
-    }
+    var angle = ToDegrees * Math.Atan2(dy, dx);
+    var relative = (angle - start) % Full;
+    if (relative < 0)
+      relative += Full;
 
-    return relativeAngle / absSweep;
+    if (relative > sweep)
+      return point.DistanceTo(PointAt(0)) < point.DistanceTo(PointAt(1)) ? 0 : 1;
+
+    var t = relative / sweep;
+
+    if (S < 0)
+      return 1 - t;
+    else
+      return t;
   }
 
   /// <summary>
@@ -62,23 +60,23 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// </summary>
   public P2 PointAt(double t)
   {
-    var angle = A + t * Math.Clamp(S, -TwoPi, TwoPi);
-    return new P2(M.X + R * Math.Cos(angle),
-                  M.Y + R * Math.Sin(angle));
+    var angle = A + t * Math.Clamp(S, -Full, Full);
+    return new P2(M.X + R * Math.Cos(ToRadians * angle),
+                  M.Y + R * Math.Sin(ToRadians * angle));
   }
   /// <summary>
   /// Gets the tangent unit vector at the given parameter [0, 1].
   /// </summary>
   public V2 TangentAt(double t)
   {
-    var sweep = Math.Clamp(S, -TwoPi, TwoPi);
+    var sweep = Math.Clamp(S, -Full, Full);
     var angle = A + t * sweep;
     var sign = Math.Sign(sweep);
     if (sign == 0)
       sign = 1; // Handle zero sweep
 
-    return new V2(-Math.Sin(angle) * sign,
-                   Math.Cos(angle) * sign);
+    return new V2(-Math.Sin(ToRadians * angle) * sign,
+                   Math.Cos(ToRadians * angle) * sign);
   }
 
   /// <summary>
@@ -94,7 +92,7 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// </summary>
   public double Length
   {
-    get { return R * Math.Abs(Math.Clamp(S, -TwoPi, TwoPi)); }
+    get { return R * Math.Abs(Math.Clamp(S, -Full, Full)); }
   }
 
   /// <summary>
@@ -102,7 +100,7 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// </summary>
   public bool IsClosed
   {
-    get { return S <= -TwoPi || S >= TwoPi; }
+    get { return S <= -Full || S >= Full; }
   }
   /// <summary>
   /// Gets whether this arc is oriented in a clockwise manner.
@@ -126,9 +124,7 @@ public readonly record struct A2(P2 M, double R, double A, double S)
   /// <param name="format">Formatting pattern. M.X={0}, M.Y={1}, R={2}, A={3}, S={4}.</param>
   public string ToString(string format)
   {
-    return string.Format(format, M.X, M.Y, R,
-    360 * A / TwoPi,
-    360 * Math.Clamp(S, -TwoPi, TwoPi) / TwoPi);
+    return string.Format(format, M.X, M.Y, R, A, Math.Clamp(S, -Full, Full));
   }
 
   /// <summary>

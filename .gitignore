@@ -53,3 +53,4 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 .DS_Store
+/Dinkus.Tests/img

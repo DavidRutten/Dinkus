@@ -6,7 +6,7 @@ namespace Dinkus.Shapes;
 /// </summary>
 /// <param name="M">Circle centre or middle.</param>
 /// <param name="R">Circle radius.</param>
-public readonly record struct C2(P2 M, double R)
+public readonly record struct C2(P2 M, double R): ICurveLike
 {
   private const double TwoPi = 2 * Math.PI;
 
@@ -50,8 +50,6 @@ public readonly record struct C2(P2 M, double R)
     }
   }
 
-#pragma warning disable CA1822 // Mark members as static
-  // Yes, this could be static, but that would just be weird.
   /// <summary>
   /// Evaluate the circle at the given parameter (in radians).
   /// </summary>
@@ -75,7 +73,6 @@ public readonly record struct C2(P2 M, double R)
                       +Math.Cos(TwoPi * t));
     }
   }
-#pragma warning restore CA1822
 
   /// <summary>
   /// Compute the distance to a point.

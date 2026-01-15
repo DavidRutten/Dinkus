@@ -6,17 +6,17 @@ public class A2Tests
   [Fact]
   public void TestA2EndAngle()
   {
-    var a = new A2(P2.Origin, 1, 0.4, 0.9);
-    Assert.Equal(1.3, a.E);
+    var a = new A2(P2.Origin, 1, 30, 45);
+    Assert.Equal(75, a.E);
 
-    var b = new A2(P2.Origin, 1, 0.4, 100);
-    Assert.Equal(0.4 + 2 * Math.PI, b.E);
+    var b = new A2(P2.Origin, 1, -20, -100);
+    Assert.Equal(-20 - 100, b.E);
   }
 
   [Fact]
   public void TestA2PointAt()
   {
-    var a = new A2(P2.Origin, 2, 0.25 * Math.PI, Math.PI);
+    var a = new A2(P2.Origin, 2, 45, 180);
     var b = a.PointAt(0);
     Assert.Equal(Math.Sqrt(2), b.X);
     Assert.Equal(b.X, b.Y, 1e-12);
@@ -43,7 +43,7 @@ public class A2Tests
   [Fact]
   public void TestA2Near1()
   {
-    var a = new A2(P2.Origin, 1, 0, 1.5 * Math.PI);
+    var a = new A2(P2.Origin, 1, 0, 270);
     var b = a.ParameterNear(new P2(2, 0));
     Assert.Equal(0, b);
 
@@ -54,7 +54,7 @@ public class A2Tests
   [Fact]
   public void TestA2Near2()
   {
-    var a = new A2(P2.Origin, 1, 0, 1.5 * Math.PI);
+    var a = new A2(P2.Origin, 1, 0, 270);
     var b = a.ParameterNear(new P2(2, -0.5));
     Assert.Equal(0, b);
 
