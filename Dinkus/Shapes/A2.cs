@@ -8,7 +8,7 @@ namespace Dinkus.Shapes;
 /// <param name="R">Arc radius.</param>
 /// <param name="A">Arc start angle, in degrees.</param>
 /// <param name="S">Arc sweep angle, in degrees.</param>
-public readonly record struct A2(P2 M, double R, double A, double S) : ICurveLike
+public readonly record struct A2(P2 M, double R, double A, double S) : ICurve
 {
   private const int Full = 360;
   internal const double ToDegrees = 180 / Math.PI;

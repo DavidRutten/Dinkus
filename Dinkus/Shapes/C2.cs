@@ -6,7 +6,7 @@ namespace Dinkus.Shapes;
 /// </summary>
 /// <param name="M">Circle centre or middle.</param>
 /// <param name="R">Circle radius.</param>
-public readonly record struct C2(P2 M, double R) : ICurveLike
+public readonly record struct C2(P2 M, double R) : ICurve
 {
   private const double TwoPi = 2 * Math.PI;
 

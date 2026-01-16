@@ -3,7 +3,7 @@ namespace Dinkus.Shapes;
 /// <summary>
 /// Interface for all curve like types.
 /// </summary>
-public interface ICurveLike
+public interface ICurve
 {
   /// <summary>
   /// Gets the length of this curve.

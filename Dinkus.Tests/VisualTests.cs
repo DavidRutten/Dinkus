@@ -14,9 +14,9 @@ public class VisualTests
   /// </summary>
   private sealed class VoronoiShader
   {
-    private ICurveLike A { get; }
-    private ICurveLike B { get; }
-    public VoronoiShader(ICurveLike a, ICurveLike b)
+    private ICurve A { get; }
+    private ICurve B { get; }
+    public VoronoiShader(ICurve a, ICurve b)
     {
       A = a;
       B = b;
@@ -59,10 +59,10 @@ public class VisualTests
   /// </summary>
   private sealed class DistanceShader
   {
-    private ICurveLike A { get; }
+    private ICurve A { get; }
     private double Min { get; }
     private double Max { get; }
-    public DistanceShader(ICurveLike a, double min, double max)
+    public DistanceShader(ICurve a, double min, double max)
     {
       A = a;
       Min = min;
@@ -269,7 +269,7 @@ public class VisualTests
       image.Fill(shader.Run);
 
       var random = new Random(1);
-      for (int i = 0; i < 800; i++)
+      for (int i = 0; i < 500; i++)
       {
         var x = random.Next(10, 990);
         var y = random.Next(10, 990);

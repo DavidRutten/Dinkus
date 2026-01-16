@@ -5,13 +5,13 @@ namespace Dinkus.Shapes;
 /// <summary>
 /// A sequence of connected curves forming a larger whole.
 /// </summary>
-public sealed class Curve : ICurveLike
+public sealed class Curve : ICurve
 {
   /// <summary>
   /// Hard-coded tolerance used for point coincidence.
   /// </summary>
   public const double Tolerance = 1e-12;
-  private readonly ImmutableArray<ICurveLike> _segments;
+  private readonly ImmutableArray<ICurve> _segments;
 
   #region construction
   /// <summary>
@@ -36,7 +36,7 @@ public sealed class Curve : ICurveLike
     return new Curve([arc]);
   }
 
-  private Curve(ImmutableArray<ICurveLike> segments)
+  private Curve(ImmutableArray<ICurve> segments)
   {
     _segments = segments;
     Count = _segments.Length;
@@ -84,7 +84,7 @@ public sealed class Curve : ICurveLike
   /// <summary>
   /// Gets the segment at the given index.
   /// </summary>
-  public ICurveLike this[int index]
+  public ICurve this[int index]
   {
     get { return _segments[index]; }
   }
@@ -115,7 +115,7 @@ public sealed class Curve : ICurveLike
   {
     if (Closed || point.DistanceTo(EndPoint) < Tolerance)
       return this;
-
+// todo deal with linear arcs.
     return new Curve(_segments.Add(A2.Create(EndPoint, point, _segments[^1].TangentAt(1))));
   }
 
@@ -125,7 +125,7 @@ public sealed class Curve : ICurveLike
   /// of this curve, a line segment will be inserted between
   /// the two.
   /// </summary>
-  public Curve Append(ICurveLike segment)
+  public Curve Append(ICurve segment)
   {
     if (Closed || segment.Closed)
       return this;

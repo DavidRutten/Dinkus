@@ -6,7 +6,7 @@ namespace Dinkus.Shapes;
 /// </summary>
 /// <param name="A">Line start point.</param>
 /// <param name="B">Line end point.</param>
-public readonly record struct L2(P2 A, P2 B) : ICurveLike
+public readonly record struct L2(P2 A, P2 B) : ICurve
 {
   /// <summary>
   /// Gets the parameter on the line closest to the point.
@@ -37,7 +37,7 @@ public readonly record struct L2(P2 A, P2 B) : ICurveLike
       (1 - t) * A.Y + t * B.Y
     );
   }
-  V2 ICurveLike.TangentAt(double t)
+  V2 ICurve.TangentAt(double t)
   {
     return Tangent;
   }
